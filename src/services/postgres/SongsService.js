@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
-const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const ServerError = require('../../exceptions/ServerError');
 
 class SongsService {
   constructor() {
@@ -27,7 +27,7 @@ class SongsService {
     const result = await this._pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new InvariantError('Lagu gagal ditambahkan');
+      throw new ServerError('Lagu gagal ditambahkan');
     }
 
     return result.rows[0].id;
