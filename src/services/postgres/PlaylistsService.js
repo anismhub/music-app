@@ -4,7 +4,7 @@ const NotFoundError = require('../../exceptions/NotFoundError');
 const ForbiddenError = require('../../exceptions/ForbiddenError');
 const ServerError = require('../../exceptions/ServerError');
 
-class SongsService {
+class PlaylistsService {
   constructor() {
     this._pool = new Pool();
   }
@@ -186,4 +186,4 @@ class SongsService {
   }
 }
 
-module.exports = SongsService;
+module.exports = PlaylistsService;
