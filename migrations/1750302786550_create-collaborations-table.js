@@ -1,30 +1,30 @@
 exports.shorthands = undefined;
 
 exports.up = (pgm) => {
-  pgm.createTable('playlist_songs', {
+  pgm.createTable('collaborations', {
     id: {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
     playlistId: {
       type: 'VARCHAR(50)',
-      references: 'playlists(id)',
       notNull: true,
+      references: 'playlists(id)',
       onDelete: 'cascade',
     },
-    songId: {
+    userId: {
       type: 'VARCHAR(50)',
-      references: 'songs(id)',
       notNull: true,
+      references: 'users(id)',
       onDelete: 'cascade',
     },
   });
 
-  pgm.addConstraint('playlist_songs', 'unique_playlist_song', {
-    unique: ['playlistId', 'songId'],
+  pgm.addConstraint('collaborations', 'unique_collaborations', {
+    unique: ['playlistId', 'userId'],
   });
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('playlists');
+  pgm.dropTable('collaborations');
 };
