@@ -19,6 +19,10 @@ exports.up = (pgm) => {
       onDelete: 'cascade',
     },
   });
+
+  pgm.addConstraint('playlist_songs', 'unique_playlist_song', {
+    unique: ['playlistid', 'songid'],
+  });
 };
 
 exports.down = (pgm) => {
