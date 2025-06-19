@@ -1,11 +1,11 @@
-const InvariantError = require('../../exceptions/InvariantError');
+const BadRequestError = require('../../exceptions/BadRequestError');
 const { SongsPayloadSchema } = require('./schema');
 
 const SongsValidator = {
   validateSongPayload: (payload) => {
     const validationResult = SongsPayloadSchema.validate(payload);
     if (validationResult.error) {
-      throw new InvariantError(validationResult.error.message);
+      throw new BadRequestError(validationResult.error.message);
     }
   },
 };
