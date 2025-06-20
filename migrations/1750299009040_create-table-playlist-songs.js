@@ -6,13 +6,13 @@ exports.up = (pgm) => {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
-    playlistId: {
+    playlist_id: {
       type: 'VARCHAR(50)',
       references: 'playlists(id)',
       notNull: true,
       onDelete: 'cascade',
     },
-    songId: {
+    song_id: {
       type: 'VARCHAR(50)',
       references: 'songs(id)',
       notNull: true,
@@ -21,10 +21,10 @@ exports.up = (pgm) => {
   });
 
   pgm.addConstraint('playlist_songs', 'unique_playlist_song', {
-    unique: ['playlistId', 'songId'],
+    unique: ['playlist_id', 'song_id'],
   });
 };
 
 exports.down = (pgm) => {
-  pgm.dropTable('playlists');
+  pgm.dropTable('playlist_songs');
 };

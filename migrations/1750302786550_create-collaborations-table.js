@@ -6,13 +6,13 @@ exports.up = (pgm) => {
       type: 'VARCHAR(50)',
       primaryKey: true,
     },
-    playlistId: {
+    playlist_id: {
       type: 'VARCHAR(50)',
       notNull: true,
       references: 'playlists(id)',
       onDelete: 'cascade',
     },
-    userId: {
+    user_id: {
       type: 'VARCHAR(50)',
       notNull: true,
       references: 'users(id)',
@@ -21,7 +21,7 @@ exports.up = (pgm) => {
   });
 
   pgm.addConstraint('collaborations', 'unique_collaborations', {
-    unique: ['playlistId', 'userId'],
+    unique: ['playlist_id', 'user_id'],
   });
 };
 
