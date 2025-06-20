@@ -105,9 +105,9 @@ class PlaylistsService {
             songs.performer
         FROM playlists
         JOIN users ON playlists.owner = users.id
-        JOIN playlist_songs ON playlist_songs.playlist_id = playlists.id
+        LEFT JOIN collaborations ON collaborations.playlist_id = playlists.id
+        LEFT JOIN playlist_songs ON playlist_songs.playlist_id = playlists.id
         JOIN songs ON songs.id = playlist_songs.song_id
-        JOIN collaborations ON collaborations.playlist_id = playlists.id
         WHERE playlists.owner = $1 OR collaborations.user_id = $1
         `,
       values: [userId],
@@ -115,7 +115,6 @@ class PlaylistsService {
 
     try {
       const result = await this._pool.query(query);
-      console.log(result);
 
       const playlist = {
         id: result.rows[0].playlistid,
