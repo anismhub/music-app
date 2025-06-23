@@ -1,18 +1,26 @@
 class ExportsHandler {
-  constructor(service, validator) {
-    this._service = service;
+  constructor(exportService, playlistService, validator) {
+    this._exportService = exportService;
+    this._playlistService = playlistService;
     this._validator = validator;
   }
 
   async postExportPlaylistByIdHandler(request, h) {
-    this._validator.validateExportNotesPayload(request.payload);
+    this._validator.validateExportPlaylistSongPayload(request.payload);
+
+    const { playlistId } = request.params;
+    const { id: credentialId } = request.auth.credentials;
 
     const message = {
-      userId: request.auth.credentials.id,
+      userId: credentialId,
       targetEmail: request.payload.targetEmail,
     };
 
-    await this._service.sendMessage('export:playlist', JSON.stringify(message));
+    await this._playlistService.verifyPlaylistOwner(playlistId, credentialId);
+    await this._exportService.sendMessage(
+      'export:playlist',
+      JSON.stringify(message)
+    );
 
     const response = h.response({
       status: 'success',
