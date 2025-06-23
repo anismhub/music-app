@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const ForbiddenError = require('../../exceptions/ForbiddenError');
-const ServerError = require('../../exceptions/ServerError');
+const InvariantError = require('../../exceptions/InvariantError');
 
 class PlaylistsService {
   constructor(collaborationService) {
@@ -20,7 +20,7 @@ class PlaylistsService {
     const result = await this._pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new ServerError('Playlist gagal ditambahkan');
+      throw new InvariantError('Playlist gagal ditambahkan');
     }
 
     return result.rows[0].id;
@@ -87,7 +87,7 @@ class PlaylistsService {
     }
 
     if (!result.rows[0].id) {
-      throw new ServerError('Lagu gagal ditambahkan pada playlist.');
+      throw new InvariantError('Lagu gagal ditambahkan pada playlist.');
     }
 
     return result.rows[0].id;
@@ -113,24 +113,20 @@ class PlaylistsService {
       values: [userId],
     };
 
-    try {
-      const result = await this._pool.query(query);
+    const result = await this._pool.query(query);
 
-      const playlist = {
-        id: result.rows[0].playlistid,
-        name: result.rows[0].playlistname,
-        username: result.rows[0].username,
-        songs: result.rows.map((row) => ({
-          id: row.songid,
-          title: row.title,
-          performer: row.performer,
-        })),
-      };
+    const playlist = {
+      id: result.rows[0].playlistid,
+      name: result.rows[0].playlistname,
+      username: result.rows[0].username,
+      songs: result.rows.map((row) => ({
+        id: row.songid,
+        title: row.title,
+        performer: row.performer,
+      })),
+    };
 
-      return { playlist };
-    } catch {
-      throw new ServerError('Terjadi kesalahan pada server');
-    }
+    return { playlist };
   }
 
   async deletePlaylistSongById(songId) {

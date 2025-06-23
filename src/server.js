@@ -28,7 +28,10 @@ const collaborations = require('./api/collaborations');
 const CollaborationsService = require('./services/postgres/CollaborationsService');
 const CollaborationsValidator = require('./validator/collaborations');
 
-const ServerError = require('./exceptions/ServerError');
+const _exports = require('./api/exports');
+const ProducerService = require('./services/rabbitmq/ProducerService');
+const ExportsValidator = require('./validator/exports');
+
 const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
@@ -117,26 +120,38 @@ const init = async () => {
         validator: CollaborationsValidator,
       },
     },
+    {
+      plugin: _exports,
+      options: {
+        service: ProducerService,
+        validator: ExportsValidator,
+      },
+    },
   ]);
 
   server.ext('onPreResponse', (request, h) => {
     const { response } = request;
 
-    if (response instanceof ServerError) {
+    if (response instanceof Error) {
+      if (response instanceof ClientError) {
+        const newResponse = h.response({
+          status: 'fail',
+          message: response.message,
+        });
+        newResponse.code(response.statusCode);
+        return newResponse;
+      }
+
+      if (!response.isServer) {
+        return h.continue;
+      }
+
+      console.log(response);
       const newResponse = h.response({
         status: 'error',
-        message: response.message,
+        message: 'Terjadi kegagalan pada server kami',
       });
-      newResponse.code(response.statusCode);
-      return newResponse;
-    }
-
-    if (response instanceof ClientError) {
-      const newResponse = h.response({
-        status: 'fail',
-        message: response.message,
-      });
-      newResponse.code(response.statusCode);
+      newResponse.code(500);
       return newResponse;
     }
 

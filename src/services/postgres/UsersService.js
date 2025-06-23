@@ -1,9 +1,9 @@
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
-const ServerError = require('../../exceptions/ServerError');
 const BadRequestError = require('../../exceptions/BadRequestError');
 const UnauthorizedError = require('../../exceptions/UnauthorizedError');
+const InvariantError = require('../../exceptions/InvariantError');
 
 class UsersService {
   constructor() {
@@ -22,7 +22,7 @@ class UsersService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new ServerError('User gagal ditambahkan');
+      throw new InvariantError('User gagal ditambahkan');
     }
 
     return result.rows[0].id;
