@@ -42,21 +42,6 @@ class PlaylistsService {
     return result.rows;
   }
 
-  async getPlaylistById(id) {
-    const query = {
-      text: 'SELECT * FROM songs WHERE id = $1',
-      values: [id],
-    };
-
-    const result = await this._pool.query(query);
-
-    if (!result.rows.length) {
-      throw new NotFoundError('Playlist tidak ditemukan');
-    }
-
-    return result.rows[0];
-  }
-
   async deletePlaylistById(id) {
     const query = {
       text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
@@ -71,7 +56,6 @@ class PlaylistsService {
   }
 
   async addPlaylistSong({ playlistId, songId }) {
-    await this.verifySongId(songId);
     const id = `p-songs-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id',
@@ -175,6 +159,7 @@ class PlaylistsService {
       throw new ForbiddenError('Anda tidak berhak mengakses resource ini');
     }
   }
+
   async verifySongId(id) {
     const query = {
       text: 'SELECT * FROM songs WHERE id = $1',
